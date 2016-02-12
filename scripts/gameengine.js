@@ -34,6 +34,7 @@ Timer.prototype.tick = function () {
 
 function GameEngine() {
     this.entities = [];
+    this.foodOnScreen = 0;
     this.showOutlines = false;
     this.ctx = null;
     this.click = null;
