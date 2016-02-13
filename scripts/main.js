@@ -2,9 +2,21 @@
  * Created by Josh Rueschenberg on 2/11/2016.
  */
 
+GLOBALS = {
+    canvas:     document.getElementById('gameWorld'),
+    ctx:        document.getElementById('gameWorld').getContext('2d'),
+    fontSize:   16,
+    numPebbles: 25,
+    animRidges: 50,
+    animAngle:  0
+
+};
+
 function Player(game) {
+    this.game = game;
     this.name = "Player";
     this.color = "#B32822";
+    this.lastColorEaten = "";
     this.speed = 5;
     this.radius = 20;
     this.mass = this.radius;
@@ -35,36 +47,88 @@ Player.prototype.handleMovement = function() {
     }
 };
 
+// http://stackoverflow.com/questions/33586669/agar-io-style-ripple-effect-for-canvas-arcs
+Player.prototype.eatAnim = function() {
+    //console.log("nom");
+    var amplitude = 5; //how far from the circle's circumference the sine wave will travel
+    var sineCount = 30; //the number of complete sine waves to draw around the circle
+    //GLOBALS.animAngle += 1;
+    //if (GLOBALS.animAngle > 360) GLOBALS.animAngle = 0;
+
+
+    var rotation = Math.atan2(-this.y - 90, -this.x);
+    console.log("angle = " + GLOBALS.animAngle);
+
+    GLOBALS.ctx.save();
+    GLOBALS.ctx.translate(this.x, this.y );
+    GLOBALS.ctx.rotate(rotation);
+    GLOBALS.ctx.translate(-(this.x), -(this.y));
+
+    GLOBALS.ctx.beginPath();
+    GLOBALS.ctx.strokeStyle = this.lastColorEaten;
+    GLOBALS.ctx.fillStyle = this.lastColorEaten;
+    for (var i = 0; i < 360; i++) {
+        //GLOBALS.animAngle += 1;
+        GLOBALS.animAngle = i * (Math.PI / 180);
+        //angle += i * Math.PI / 18000;
+        //angle += Math.PI / 18000;
+        var point = circle(this.x, this.y, this.radius, amplitude, GLOBALS.animAngle, sineCount);
+        GLOBALS.ctx.lineTo(point.x, point.y);
+    }
+
+    GLOBALS.ctx.closePath();
+    GLOBALS.ctx.stroke();
+    GLOBALS.ctx.fill();
+    GLOBALS.ctx.restore();
+    Entity.prototype.draw.call(this);
+};
+
 Player.prototype.update = function() {
     this.handleMovement();
+
     for (var i = 0; i < this.game.entities.length; i++) {
         var current = this.game.entities[i];
         if (this.collide(current) && current.name === "Food") {
             this.radius += current.radius;
-            this.mass  += current.mass;
-            this.speed *= 0.96;
+            this.mass   += current.mass + 0.1;
+            this.speed  *= 0.96;
+            this.lastColorEaten = current.color;
+
             current.removeFromWorld = true;
             this.game.foodOnScreen--;
         }
     }
+    Entity.prototype.update.call(this);
 };
 
-Player.prototype.draw = function(ctx) {
-    ctx.beginPath();
-    ctx.fillStyle = this.color;
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+Player.prototype.draw = function() {
 
-    ctx.fill();
-    ctx.fillStyle = "Black";
-    ctx.fillText("Mass: " + this.mass, this.x - this.radius/2, this.y);
-    ctx.fillText("Speed: " + this.speed + "px", this.x - this.radius/2, this.y + 16);
-    ctx.closePath();
+    this.eatAnim();
+    GLOBALS.ctx.beginPath();
+    GLOBALS.ctx.fillStyle = this.color;
+    GLOBALS.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+
+    GLOBALS.ctx.fill();
+    GLOBALS.ctx.fillStyle = "Black";
+    GLOBALS.ctx.fillText("Mass: " + Math.round(this.mass), this.x - this.radius/2, this.y);
+    GLOBALS.ctx.fillText("Speed: " + this.speed + "px", this.x - this.radius/2, this.y + 16);
+    GLOBALS.ctx.closePath();
+
+
 
     Entity.prototype.draw.call(this);
 };
 
+function circle(cx, cy, radius, amp, angle, sineCount) {
+    var x = cx + (radius + amp * Math.sin(sineCount * angle)) * Math.cos(angle);
+    var y = cy + (radius + amp * Math.sin(sineCount * angle)) * Math.sin(angle);
+
+    return {x: x, y: y};
+}
+
 
 function Food(game) {
+    this.game = game;
     this.name = "Food";
     this.color = randomColor();
     this.radius = randomInt(10);
@@ -80,18 +144,18 @@ Food.prototype.constructor = Food;
 
 Food.prototype.update = function() {
     var food;
-    for (this.game.foodOnScreen; this.game.foodOnScreen < 50; this.game.foodOnScreen++) {
+    for (this.game.foodOnScreen; this.game.foodOnScreen < GLOBALS.numPebbles; this.game.foodOnScreen++) {
         food = new Food(this.game);
         this.game.addEntity(food);
     }
 };
 
-Food.prototype.draw = function(ctx) {
-    ctx.beginPath();
-    ctx.fillStyle = this.color;
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+Food.prototype.draw = function() {
+    GLOBALS.ctx.beginPath();
+    GLOBALS.ctx.fillStyle = this.color;
+    GLOBALS.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    GLOBALS.ctx.fill();
+    GLOBALS.ctx.closePath();
 
     Entity.prototype.draw.call(this);
 };
@@ -100,7 +164,7 @@ Food.prototype.draw = function(ctx) {
 /**
  * Generates a random hex color code
  * Swiped from: http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript
- * @returns color in hex
+ * @returns color in hex string format
  */
 function randomColor() {
     var letters = '0123456789ABCDEF'.split('');
@@ -180,15 +244,15 @@ window.addEventListener('keydown', function (event) {
 
 // main code starts here
 console.log("fluxing the flux capacitor");
-var canvas = document.getElementById('gameWorld');
+GLOBALS.canvas = document.getElementById('gameWorld');
 
-var ctx = canvas.getContext('2d');
+GLOBALS.ctx = GLOBALS.canvas.getContext('2d');
 
-ctx.font = "16px serif";
+GLOBALS.ctx.font = "" + GLOBALS.fontSize + "px serif";
 var gameEngine = new GameEngine();
 var pebble;
 
-for (var i = 0; i < 50; i++) {
+for (var i = 0; i < GLOBALS.numPebbles; i++) {
     pebble = new Food(gameEngine);
     gameEngine.addEntity(pebble);
     gameEngine.foodOnScreen++;
@@ -197,5 +261,5 @@ for (var i = 0; i < 50; i++) {
 var player = new Player(gameEngine);
 gameEngine.addEntity(player);
 
-gameEngine.init(ctx);
+gameEngine.init(GLOBALS.ctx);
 gameEngine.start();
