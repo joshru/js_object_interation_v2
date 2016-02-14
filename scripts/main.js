@@ -96,6 +96,7 @@ Player.prototype.update = function() {
 
             current.removeFromWorld = true;
             this.game.foodOnScreen--;
+            GLOBALS.numPebbles *= 0.98;
         }
     }
     Entity.prototype.update.call(this);
@@ -233,7 +234,7 @@ window.addEventListener('keyup', function (event) {
 window.addEventListener('keydown', function (event) {
     Key.onKeyDown(event);
 
-    if (event.which === 82) {
+    if (event.whFich === 82) {
         globals.player.game.RELOAD = true;
     }
     if (event.which === Key.H) {
