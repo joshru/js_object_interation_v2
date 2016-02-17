@@ -2,11 +2,14 @@
  * Created by Josh Rueschenberg on 2/11/2016.
  */
 
+//TODO maybe for the scrolling map feature I could randomly negate x and y coordinates for spawning to get food bubbles to spawn outside the current player scope
+
 GLOBALS = {
     canvas:     document.getElementById('gameWorld'),
     ctx:        document.getElementById('gameWorld').getContext('2d'),
     fontSize:   16,
     numPebbles: 25,
+    pebbleSize: 10,
     animRidges: 50,
     animAngle:  0
 
@@ -57,7 +60,7 @@ Player.prototype.eatAnim = function() {
 
 
     var rotation = Math.atan2(-this.y - 90, -this.x);
-    console.log("angle = " + GLOBALS.animAngle);
+    //console.log("angle = " + GLOBALS.animAngle);
 
     GLOBALS.ctx.save();
     GLOBALS.ctx.translate(this.x, this.y );
@@ -96,9 +99,12 @@ Player.prototype.update = function() {
 
             current.removeFromWorld = true;
             this.game.foodOnScreen--;
-            GLOBALS.numPebbles *= 0.98;
+            //GLOBALS.numPebbles *= 0.98;
+            this.scale(0.96);
         }
     }
+
+
     Entity.prototype.update.call(this);
 };
 
@@ -111,13 +117,32 @@ Player.prototype.draw = function() {
 
     GLOBALS.ctx.fill();
     GLOBALS.ctx.fillStyle = "Black";
-    GLOBALS.ctx.fillText("Mass: " + Math.round(this.mass), this.x - this.radius/2, this.y);
-    GLOBALS.ctx.fillText("Speed: " + this.speed + "px", this.x - this.radius/2, this.y + 16);
+    GLOBALS.ctx.fillText("Mass: " + Math.round(this.mass), this.x - this.radius / 2, this.y);
+    GLOBALS.ctx.fillText("Speed: " + this.speed + "px", this.x - this.radius / 2, this.y + 16);
     GLOBALS.ctx.closePath();
 
 
 
     Entity.prototype.draw.call(this);
+};
+
+Player.prototype.scale = function(scale) {
+    if (GLOBALS.pebbleSize >= 2) {
+        GLOBALS.pebbleSize *= scale;
+        //var i;
+        for (var i = 0; i < this.game.entities.length; i++) {
+            var current = this.game.entities[i];
+            if (current.name === "Food") {
+                //current.radius *= scale;
+                console.log("scaling");
+
+                current.radius = GLOBALS.pebbleSize;
+                console.log("pebble size = " + GLOBALS.pebbleSize);
+                //current.draw();
+            }
+
+        }
+    }
 };
 
 function circle(cx, cy, radius, amp, angle, sineCount) {
@@ -132,7 +157,7 @@ function Food(game) {
     this.game = game;
     this.name = "Food";
     this.color = randomColor();
-    this.radius = randomInt(10);
+    this.radius = GLOBALS.pebbleSize/*randomInt(10)*/;
     this.mass = this.radius;
     this.x = randomRangeInt(5, 795);
     this.y = randomRangeInt(5, 795);
@@ -154,12 +179,15 @@ Food.prototype.update = function() {
 Food.prototype.draw = function() {
     GLOBALS.ctx.beginPath();
     GLOBALS.ctx.fillStyle = this.color;
-    GLOBALS.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    //GLOBALS.ctx.clearRect(this.x, this.y, GLOBALS.pebbleSize, GLOBALS.pebbleSize);
+    GLOBALS.ctx.arc(this.x, this.y, GLOBALS.pebbleSize, 0, Math.PI * 2, false);
     GLOBALS.ctx.fill();
     GLOBALS.ctx.closePath();
 
     Entity.prototype.draw.call(this);
 };
+
+
 
 
 /**
@@ -231,6 +259,8 @@ var Key = {
 window.addEventListener('keyup', function (event) {
     Key.onKeyUp(event);
 }, false);
+
+
 window.addEventListener('keydown', function (event) {
     Key.onKeyDown(event);
 

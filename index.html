@@ -16,27 +16,36 @@
 <body>
 
 <header>
-    <div class="container">
-        <h1>Javascript/HTML 5 object interaction demo</h1>
+    <div class="container" style="text-align:center;">
+        <h1>HTML 5 object interaction demo</h1>
         <h2>A Rooshy Production</h2>
 
         <section id="downloads">
-            <a href="https://github.com/joshru/TUOP/zipball/master" class="btn">Download as .zip</a>
-            <a href="https://github.com/joshru/TUOP/tarball/master" class="btn">Download as .tar.gz</a>
-            <a href="https://github.com/joshru/TUOP" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+            <a href="https://github.com/joshru/js_object_interaction/zipball/master" class="btn">Download as .zip</a>
+            <a href="https://github.com/joshru/js_object_interaction" class="btn btn-github"><span class="icon"></span>View project on GitHub</a>
         </section>
     </div>
 </header>
 
 <ul>
     <li>Simulation inspired by agar.io one of the most amazing javascript games on the web. Play the original <a href="http://agar.io">here</a> </li>
+    <li>See list of game interactions below</li>
 </ul>
 
 <canvas id="gameWorld" tabindex="1" width="800" height="800" style="width:800px; height:800px; border: 5px solid black; background: white"></canvas>
 
 <div style="text-align: center;">
     <p></p>
-    Project maintained Josh Rueschenberg</div>
+    <h3>Interactions</h3>
+    <p> • Player grows when food pebbles are picked up. </p>
+    <p> • Player slows down a bit as you grow larger. </p>
+    <p> • Ridged border on the player changes color to reflect the color of the last pebble eaten. </p>
+    <p> • Food pebbles on screen shrink a bit as the player grows to simulate zooming out. </p>
+
+    <p></p>
+    <p></p>
+    <h4> Project maintained Josh Rueschenberg </h4>
+</div>
 
 <script type="text/javascript" src="./scripts/gameengine.js"></script>
 <script type="text/javascript" src="./scripts/assetmanager.js"></script>
