@@ -9,10 +9,49 @@ GLOBALS = {
     ctx:        document.getElementById('gameWorld').getContext('2d'),
     fontSize:   16,
     numPebbles: 25,
+    gridWidth:  25,
     pebbleSize: 10,
     animRidges: 50,
     animAngle:  0
 
+};
+
+function Grid(game) {
+    this.name = "Grid";
+    this.x = 0;
+    this.y = 0;
+
+    Entity.call(this, game, this.x, this.y);
+}
+Player.prototype = new Entity();
+Player.prototype.constructor = Grid;
+
+Grid.prototype.update = function() {
+
+};
+
+Grid.prototype.draw = function() {
+    var i;
+
+    GLOBALS.ctx.strokeStyle = "#737373";
+    for (i = 0; i < 800; i += GLOBALS.gridWidth) {
+        GLOBALS.ctx.beginPath();
+        GLOBALS.ctx.moveTo(i, 0);
+        GLOBALS.ctx.lineTo(i, 800);
+        GLOBALS.ctx.stroke();
+        GLOBALS.ctx.closePath();
+    }
+
+    for (i = 0; i < 800; i += GLOBALS.gridWidth) {
+        GLOBALS.ctx.beginPath();
+        GLOBALS.ctx.moveTo(0, i);
+        GLOBALS.ctx.lineTo(800, i);
+        GLOBALS.ctx.stroke();
+        GLOBALS.ctx.closePath();
+    }
+
+
+    Entity.prototype.draw.call(this);
 };
 
 function Player(game) {
@@ -134,16 +173,18 @@ Player.prototype.scale = function(scale) {
             var current = this.game.entities[i];
             if (current.name === "Food") {
                 //current.radius *= scale;
-                console.log("scaling");
+                //console.log("scaling");
 
                 current.radius = GLOBALS.pebbleSize;
-                console.log("pebble size = " + GLOBALS.pebbleSize);
+                //console.log("pebble size = " + GLOBALS.pebbleSize);
                 //current.draw();
             }
 
         }
     }
+    if (GLOBALS.gridWidth >= 7) GLOBALS.gridWidth *= scale;
 };
+    //GLOBALS.gridWidth *= scale;
 
 function circle(cx, cy, radius, amp, angle, sineCount) {
     var x = cx + (radius + amp * Math.sin(sineCount * angle)) * Math.cos(angle);
@@ -282,6 +323,8 @@ GLOBALS.ctx = GLOBALS.canvas.getContext('2d');
 GLOBALS.ctx.font = "" + GLOBALS.fontSize + "px serif";
 var gameEngine = new GameEngine();
 var pebble;
+var bg = new Grid(gameEngine);
+gameEngine.addEntity(bg);
 
 for (var i = 0; i < GLOBALS.numPebbles; i++) {
     pebble = new Food(gameEngine);
