@@ -72,20 +72,24 @@ Player.prototype.eatAnim = function() {
 Player.prototype.update = function() {
     this.handleMovement();
 
-    for (var i = 0; i < this.game.entities.length; i++) {
-        var current = this.game.entities[i];
-        if (this.collide(current) && current.name === "Food") {
-            this.radius += current.radius * 0.5;
-            this.mass   += current.mass * 0.5;
-            this.speed  *= 0.98;
-            this.lastColorEaten = current.color;
+    if (this.mass < 400) {
+        for (var i = 0; i < this.game.entities.length; i++) {
+            var current = this.game.entities[i];
+            if (this.collide(current) && current.name === "Food") {
+                this.radius += current.radius * 0.5;
+                this.mass += current.mass * 0.5;
+                this.speed *= 0.98;
+                this.lastColorEaten = current.color;
 
-            current.removeFromWorld = true;
-            this.game.foodOnScreen--;
-            //GLOBALS.numPebbles *= 0.98;
-            this.scale(0.96);
+                current.removeFromWorld = true;
+                this.game.foodOnScreen--;
+                //GLOBALS.numPebbles *= 0.98;
+                this.scale(0.96);
+            }
         }
     }
+
+    if (this.mass > 400) GLOBALS.simOver = true;
 
 
     Entity.prototype.update.call(this);

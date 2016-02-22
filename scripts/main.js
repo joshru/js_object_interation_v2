@@ -11,7 +11,8 @@ GLOBALS = {
     gridWidth:  25,
     pebbleSize: 10,
     animRidges: 50,
-    animAngle:  0
+    animAngle:  0,
+    simOver:    false
 
 };
 
@@ -129,6 +130,9 @@ ASSET_MANAGER.downloadAll(function() {
 
     var player = new Player(gameEngine);
     gameEngine.addEntity(player);
+
+    var gg = new GG(gameEngine);
+    gameEngine.addEntity(gg);
 
     gameEngine.init(GLOBALS.ctx);
     gameEngine.start();

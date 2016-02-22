@@ -19,37 +19,39 @@ Food.prototype.constructor = Food;
 Food.prototype.update = function() {
     var food;
 
-    this.x += this.velocity.x * this.game.clockTick;
-    this.y += this.velocity.y * this.game.clockTick;
+    if (!GLOBALS.simOver) {
+        this.x += this.velocity.x * this.game.clockTick;
+        this.y += this.velocity.y * this.game.clockTick;
 
-    for (this.game.foodOnScreen; this.game.foodOnScreen < GLOBALS.numPebbles; this.game.foodOnScreen++) {
-        food = new Food(this.game);
-        this.game.addEntity(food);
-    }
+        for (this.game.foodOnScreen; this.game.foodOnScreen < GLOBALS.numPebbles; this.game.foodOnScreen++) {
+            food = new Food(this.game);
+            this.game.addEntity(food);
+        }
 
-    for (var i = 0; i < this.game.entities.length; i++) {
-        var current = this.game.entities[i];
-        if (current.name === "Player") {
-            var dist = distance(this, current);
+        for (var i = 0; i < this.game.entities.length; i++) {
+            var current = this.game.entities[i];
+            if (current.name === "Player") {
+                var dist = distance(this, current);
 
-            if(dist <= this.fleeRadius) {
-                console.log("running");
-                var dx = this.x - current.x;
-                var dy = this.y - current.y;
-                var dist = Math.sqrt(dx * dx + dy * dy);
-                this.velocity.x = (dx / dist) * 100;
-                this.velocity.y = (dx / dist) * 100;
-                //var difX = (current.x - this.x) / dist;
-                //var difY = (current.y - this.y) / dist;
-                //this.velocity.x += difX * 1000 / (dist * dist);
-                //this.velocity.y -= difY * 1000 / (dist * dist);
+                if (dist <= this.fleeRadius) {
+                    console.log("running");
+                    var dx = this.x - current.x;
+                    var dy = this.y - current.y;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    this.velocity.x = (dx / dist) * 100;
+                    this.velocity.y = (dx / dist) * 100;
+                    //var difX = (current.x - this.x) / dist;
+                    //var difY = (current.y - this.y) / dist;
+                    //this.velocity.x += difX * 1000 / (dist * dist);
+                    //this.velocity.y -= difY * 1000 / (dist * dist);
+                }
             }
         }
-    }
-    if (this.collideLeft() || this.collideRight()) {
-        this.velocity.x = -this.velocity.x;
-    } else if (this.collideTop() || this.collideBottom()) {
-        this.velocity.y = -this.velocity.y;
+        if (this.collideLeft() || this.collideRight()) {
+            this.velocity.x = -this.velocity.x;
+        } else if (this.collideTop() || this.collideBottom()) {
+            this.velocity.y = -this.velocity.y;
+        }
     }
 };
 
