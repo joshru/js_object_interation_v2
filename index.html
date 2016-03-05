@@ -3,7 +3,7 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
+    <script type="text/javascript" src="http://76.28.150.193:8888/socket.io/socket.io.js"></script>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
     <!--<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">-->
@@ -33,6 +33,10 @@
 </ul>
 
 <canvas id="gameWorld" tabindex="1" width="665" height="576" style="width:665px; height:576px; border: 5px solid black; background: white"></canvas>
+<div class="wrapper" style="text-align: center;">
+    <button name="save" id="saveButton">Save State</button>
+    <button name="load" id="loadButton">Load State</button>
+</div>
 
 <div style="text-align: center;">
     <p></p>
@@ -49,6 +53,8 @@
     <p></p>
     <h4> Project maintained Josh Rueschenberg </h4>
 </div>
+
+
 
 <script type="text/javascript" src="./scripts/gameengine.js"></script>
 <script type="text/javascript" src="./scripts/assetmanager.js"></script>

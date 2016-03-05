@@ -1,6 +1,7 @@
 /**
  * Created by Josh Rueschenberg on 2/11/2016.
  */
+//test
 
 GLOBALS = {
     canvas:     document.getElementById('gameWorld'),
@@ -13,7 +14,16 @@ GLOBALS = {
     animRidges: 50,
     animAngle:  0,
     simOver:    false
+};
 
+DB = {
+    express:     require("express"),
+    app:         express(),
+    port:        8888,
+    dbURL:       "localhost:27014/testdb",
+    collections: ["table"],
+    db:          require("mongojs").connect(dbURL, collections),
+    io:          require("socket.io").listen(app.listen(port))
 };
 
 function circle(cx, cy, radius, amp, angle, sineCount) {
