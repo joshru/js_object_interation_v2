@@ -34,16 +34,11 @@ Food.prototype.update = function() {
                 var dist = distance(this, current);
 
                 if (dist <= this.fleeRadius) {
-                    console.log("running");
                     var dx = this.x - current.x;
                     var dy = this.y - current.y;
                     var dist = Math.sqrt(dx * dx + dy * dy);
                     this.velocity.x = (dx / dist) * 100;
                     this.velocity.y = (dx / dist) * 100;
-                    //var difX = (current.x - this.x) / dist;
-                    //var difY = (current.y - this.y) / dist;
-                    //this.velocity.x += difX * 1000 / (dist * dist);
-                    //this.velocity.y -= difY * 1000 / (dist * dist);
                 }
             }
         }

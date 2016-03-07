@@ -1,7 +1,6 @@
 /**
  * Created by Josh Rueschenberg on 2/11/2016.
  */
-//test
 
 GLOBALS = {
     canvas:     document.getElementById('gameWorld'),
@@ -16,15 +15,9 @@ GLOBALS = {
     simOver:    false
 };
 
-DB = {
-    express:     require("express"),
-    app:         express(),
-    port:        8888,
-    dbURL:       "localhost:27014/testdb",
-    collections: ["table"],
-    db:          require("mongojs").connect(dbURL, collections),
-    io:          require("socket.io").listen(app.listen(port))
-};
+
+var socket = io.connect("http://76.28.150.193:8888");
+
 
 function circle(cx, cy, radius, amp, angle, sineCount) {
     var x = cx + (radius + amp * Math.sin(sineCount * angle)) * Math.cos(angle);
@@ -115,6 +108,9 @@ window.addEventListener('keydown', function (event) {
 
 }, false);
 
+var saveButton = document.getElementById("saveButton");
+var loadButton = document.getElementById("loadButton");
+
 // main code starts here
 var ASSET_MANAGER = new AssetManager();
 
@@ -130,7 +126,7 @@ ASSET_MANAGER.downloadAll(function() {
     var pebble;
     GLOBALS.grid = new Grid(gameEngine);
     //var bg = new Grid(gameEngine);
-    gameEngine.addEntity(GLOBALS.grid);
+    gameEngine.addBG(GLOBALS.grid);
 
     for (var i = 0; i < GLOBALS.numPebbles; i++) {
         pebble = new Food(gameEngine);
@@ -139,10 +135,17 @@ ASSET_MANAGER.downloadAll(function() {
     }
 
     var player = new Player(gameEngine);
-    gameEngine.addEntity(player);
+    gameEngine.addPlayer(player);
 
     var gg = new GG(gameEngine);
     gameEngine.addEntity(gg);
+
+    saveButton.addEventListener('click', function() {
+        gameEngine.save();
+    });
+    //loadButton.addEventListener('click', function() {
+    //    loadGame();
+    //});
 
     gameEngine.init(GLOBALS.ctx);
     gameEngine.start();

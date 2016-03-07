@@ -34,6 +34,8 @@ Timer.prototype.tick = function () {
 
 function GameEngine() {
     this.entities = [];
+    this.bg = null;
+    this.player = null;
     this.foodOnScreen = 0;
     this.showOutlines = false;
     this.ctx = null;
@@ -61,6 +63,19 @@ GameEngine.prototype.start = function () {
         requestAnimFrame(gameLoop, that.ctx.canvas);
     })();
 };
+
+GameEngine.prototype.save = function() {
+    //save(this);
+    var clone = [];
+
+    for (var i = 0; i < this.entities.length; i++) {
+
+    }
+};
+//
+//GameEngine.prototype.load = function() {
+//
+//};
 
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
@@ -101,6 +116,14 @@ GameEngine.prototype.addEntity = function (entity) {
     this.entities.push(entity);
 };
 
+GameEngine.prototype.addPlayer = function(player) {
+    this.player = player;
+};
+
+GameEngine.prototype.addBG = function(BG) {
+    this.bg = BG;
+};
+
 //TODO consider making a function 'addBullet'
 //This approach may end up getting redundant if we end up with more arrays of different entity types
 
@@ -117,12 +140,18 @@ GameEngine.prototype.draw = function () {
  * Calls draw on all elements of a given array
  * @param array of entities
  */
-GameEngine.prototype.drawEntitiesIn = function(array) { for (var i = 0; i < array.length; i++) array[i].draw(this.ctx); };
+GameEngine.prototype.drawEntitiesIn = function(array) {
+    this.bg.draw();
+    this.player.draw();
+    for (var i = 0; i < array.length; i++) array[i].draw(this.ctx);
+};
 /**
  * Calls update on all elements in a given array
  * @param array of entities
  */
 GameEngine.prototype.updateEntitiesIn = function(array) {
+    this.bg.update();
+    this.player.update();
     for (var i = 0; i < array.length; i++) {
         if (!array[i].removeFromWorld) array[i].update();
     }
