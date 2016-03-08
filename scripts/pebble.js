@@ -16,6 +16,18 @@ function Food(game) {
 Food.prototype = new Entity();
 Food.prototype.constructor = Food;
 
+Food.prototype.updateFromClone = function(game, clone) {
+    this.game = game;
+    this.name = clone.name;
+    this.color = clone.color;
+    this.radius = clone.radius;
+    this.mass = clone.radius;
+    this.x = clone.x;
+    this.y = clone.y;
+    this.fleeRadius = 150;
+    this.velocity = clone.velocity;
+};
+
 Food.prototype.update = function() {
     var food;
 

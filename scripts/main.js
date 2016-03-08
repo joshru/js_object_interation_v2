@@ -16,7 +16,7 @@ GLOBALS = {
 };
 
 
-//var socket = io.connect("http://76.28.150.193:8888");
+var socket = io.connect("http://76.28.150.193:8888");
 
 
 function circle(cx, cy, radius, amp, angle, sineCount) {
@@ -24,6 +24,11 @@ function circle(cx, cy, radius, amp, angle, sineCount) {
     var y = cy + (radius + amp * Math.sin(sineCount * angle)) * Math.sin(angle);
 
     return {x: x, y: y};
+}
+
+function updateGlobals(clone) {
+    GLOBALS.pebbleSize = clone.pebbleSize;
+    GLOBALS.simOver = clone.simOver;
 }
 
 /**
@@ -143,9 +148,15 @@ ASSET_MANAGER.downloadAll(function() {
     saveButton.addEventListener('click', function() {
         gameEngine.save();
     });
-    //loadButton.addEventListener('click', function() {
-    //    loadGame();
-    //});
+
+    loadButton.addEventListener('click', function() {
+        gameEngine.load();
+    });
+
+    socket.on("load", function(stuffs) {
+        //console.log(stuffs);
+        gameEngine.loadResources(stuffs);
+    });
 
     gameEngine.init(GLOBALS.ctx);
     gameEngine.start();

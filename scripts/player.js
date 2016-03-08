@@ -14,6 +14,18 @@ function Player(game) {
 Player.prototype = new Entity();
 Player.prototype.constructor = Player;
 
+Player.prototype.updateFromClone = function(game, clone) {
+    this.game = game;
+    this.name = clone.name;
+    this.color = clone.color;
+    this.lastColorEaten = clone.LCE;
+    this.speed = clone.speed;
+    this.radius = clone.radius;
+    this.mass = clone.mass;
+    this.x = clone.x;
+    this.y = clone.y;
+};
+
 Player.prototype.collide = function(ent) {
     return distance(this, ent) < this.radius + ent.radius;
 };
@@ -54,10 +66,7 @@ Player.prototype.eatAnim = function() {
     GLOBALS.ctx.strokeStyle = this.lastColorEaten;
     GLOBALS.ctx.fillStyle = this.lastColorEaten;
     for (var i = 0; i < 360; i++) {
-        //GLOBALS.animAngle += 1;
         GLOBALS.animAngle = i * (Math.PI / 180);
-        //angle += i * Math.PI / 18000;
-        //angle += Math.PI / 18000;
         var point = circle(this.x, this.y, this.radius, amplitude, GLOBALS.animAngle, sineCount);
         GLOBALS.ctx.lineTo(point.x, point.y);
     }
@@ -96,7 +105,6 @@ Player.prototype.update = function() {
 };
 
 Player.prototype.draw = function() {
-
     this.eatAnim();
     GLOBALS.ctx.beginPath();
     GLOBALS.ctx.fillStyle = this.color;
@@ -116,16 +124,11 @@ Player.prototype.draw = function() {
 Player.prototype.scale = function(scale) {
     if (GLOBALS.pebbleSize >= 2) {
         GLOBALS.pebbleSize *= scale;
-        //var i;
         for (var i = 0; i < this.game.entities.length; i++) {
             var current = this.game.entities[i];
             if (current.name === "Food") {
-                //current.radius *= scale;
-                //console.log("scaling");
 
                 current.radius = GLOBALS.pebbleSize;
-                //console.log("pebble size = " + GLOBALS.pebbleSize);
-                //current.draw();
             }
 
         }

@@ -14,7 +14,6 @@ window.requestAnimFrame = (function () {
         };
 })();
 
-
 function Timer() {
     this.gameTime = 0;
     this.maxStep = 0.05;
@@ -67,10 +66,12 @@ GameEngine.prototype.start = function () {
 
 GameEngine.prototype.save = function() {
     //save(this);
-    var clone = [];
-
+    var globals = {pebbleSize: GLOBALS.pebbleSize, simOver: GLOBALS.simOver};
+    var clone = {};
+    var pebbles = [];
+    var temp;
     for (var i = 0; i < this.entities.length; i++) {
-        var temp = {};
+        temp = {};
         var current   = this.entities[i];
         temp.name     = current.name;
         temp.color    = current.color;
@@ -78,14 +79,63 @@ GameEngine.prototype.save = function() {
         temp.x        = current.x;
         temp.y        = current.y;
         temp.velocity = current.velocity;
-        clone.push(temp);
+        pebbles.push(temp);
     }
+    var tempPlayer = {};
+    tempPlayer.name   = this.player.name;
+    tempPlayer.color  = this.player.color;
+    tempPlayer.LCE    = this.player.lastColorEaten;
+    tempPlayer.speed  = this.player.speed;
+    tempPlayer.radius = this.player.radius;
+    tempPlayer.mass   = this.player.mass;
+    tempPlayer.x      = this.player.x;
+    tempPlayer.y      = this.player.y;
+
+    var tempGrid = {};
+    tempGrid.name   = this.bg.name;
+    tempGrid.x      = this.bg.x;
+    tempGrid.y      = this.bg.y;
+    tempGrid.xWidth = this.bg.xWidth;
+    tempGrid.yWidth = this.bg.yWidth;
+
+    clone.globals = globals;
+    clone.grid    = tempGrid;
+    clone.pebbles = pebbles;
+    clone.player  = tempPlayer;
+
     save(clone);
 };
-//
-//GameEngine.prototype.load = function() {
-//
-//};
+
+GameEngine.prototype.load = function() {
+    //load();
+    console.log("loading");
+    socket.emit("load", {studentname: "Josh Rueschenberg", statename: "simState"});
+};
+
+GameEngine.prototype.loadResources = function(stuffs) {
+    //console.log(stuffs);
+    var parsed = JSON.parse(stuffs.data);
+    //console.log(parsed);
+    this.processLoad(parsed);
+};
+
+GameEngine.prototype.processLoad = function(data) {
+    var globals = data.globals;
+    var grid    = data.grid;
+    var pebbles = data.pebbles;
+    var player  = data.player;
+
+    updateGlobals(globals);
+
+    this.bg.updateFromClone(this, grid);
+
+    for (var i = 0; i < pebbles.length; i++) {
+        var clone = pebbles[i];
+        this.entities[i].updateFromClone(this, clone);
+    }
+
+    this.player.updateFromClone(this, player);
+};
 
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
@@ -122,7 +172,7 @@ GameEngine.prototype.startInput = function () {
 };
 
 GameEngine.prototype.addEntity = function (entity) {
-    console.log('added entity');
+    //console.log('added entity');
     this.entities.push(entity);
 };
 
@@ -248,3 +298,4 @@ Entity.prototype.rotateAndCache = function (image, angle) {
     //offscreenCtx.strokeRect(0,0,size,size);
     return offscreenCanvas;
 };
+
