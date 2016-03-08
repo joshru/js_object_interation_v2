@@ -16,7 +16,7 @@ GLOBALS = {
 };
 
 
-var socket = io.connect("http://76.28.150.193:8888");
+//var socket = io.connect("http://76.28.150.193:8888");
 
 
 function circle(cx, cy, radius, amp, angle, sineCount) {
@@ -138,7 +138,7 @@ ASSET_MANAGER.downloadAll(function() {
     gameEngine.addPlayer(player);
 
     var gg = new GG(gameEngine);
-    gameEngine.addEntity(gg);
+    gameEngine.addGG(gg);
 
     saveButton.addEventListener('click', function() {
         gameEngine.save();

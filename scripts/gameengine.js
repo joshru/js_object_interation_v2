@@ -35,6 +35,7 @@ Timer.prototype.tick = function () {
 function GameEngine() {
     this.entities = [];
     this.bg = null;
+    this.overlay = null;
     this.player = null;
     this.foodOnScreen = 0;
     this.showOutlines = false;
@@ -69,8 +70,17 @@ GameEngine.prototype.save = function() {
     var clone = [];
 
     for (var i = 0; i < this.entities.length; i++) {
-
+        var temp = {};
+        var current   = this.entities[i];
+        temp.name     = current.name;
+        temp.color    = current.color;
+        temp.radius   = current.radius;
+        temp.x        = current.x;
+        temp.y        = current.y;
+        temp.velocity = current.velocity;
+        clone.push(temp);
     }
+    save(clone);
 };
 //
 //GameEngine.prototype.load = function() {
@@ -124,6 +134,10 @@ GameEngine.prototype.addBG = function(BG) {
     this.bg = BG;
 };
 
+GameEngine.prototype.addGG = function(GG) {
+    this.overlay = GG;
+};
+
 //TODO consider making a function 'addBullet'
 //This approach may end up getting redundant if we end up with more arrays of different entity types
 
@@ -144,6 +158,7 @@ GameEngine.prototype.drawEntitiesIn = function(array) {
     this.bg.draw();
     this.player.draw();
     for (var i = 0; i < array.length; i++) array[i].draw(this.ctx);
+    if (GLOBALS.simOver) this.overlay.draw(this.ctx);
 };
 /**
  * Calls update on all elements in a given array
